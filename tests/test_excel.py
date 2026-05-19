@@ -4,11 +4,11 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from core import excel
+from app.core import excel
 
 class TestExcelModule(unittest.TestCase):
-    @patch('core.excel.os.path.exists', return_value=True)
-    @patch('core.excel.load_workbook')
+    @patch('app.core.excel.os.path.exists', return_value=True)
+    @patch('app.core.excel.load_workbook')
     def test_abrir_planilha_inicial_sucesso(self, mock_load, mock_exists):
         wb_mock = MagicMock()
         ws_mock = MagicMock()
@@ -18,34 +18,34 @@ class TestExcelModule(unittest.TestCase):
         self.assertEqual(wb, wb_mock)
         self.assertEqual(ws, ws_mock)
 
-    @patch('core.excel.os.path.exists', return_value=False)
-    @patch('core.excel.messagebox.showerror')
+    @patch('app.core.excel.os.path.exists', return_value=False)
+    @patch('app.core.excel.messagebox.showerror')
     def test_abrir_planilha_inicial_arquivo_nao_encontrado(self, mock_msg, mock_exists):
         wb, ws = excel.abrir_planilha_inicial('inexistente.xlsx')
         mock_msg.assert_called_once()
         self.assertIsNone(wb)
         self.assertIsNone(ws)
 
-    @patch('core.excel.os.path.exists', return_value=True)
-    @patch('core.excel.load_workbook', side_effect=Exception('erro'))
-    @patch('core.excel.messagebox.showerror')
+    @patch('app.core.excel.os.path.exists', return_value=True)
+    @patch('app.core.excel.load_workbook', side_effect=Exception('erro'))
+    @patch('app.core.excel.messagebox.showerror')
     def test_abrir_planilha_inicial_erro_ao_abrir(self, mock_msg, mock_load, mock_exists):
         wb, ws = excel.abrir_planilha_inicial('erro.xlsx')
         mock_msg.assert_called_once()
         self.assertIsNone(wb)
         self.assertIsNone(ws)
 
-    @patch('core.excel.filedialog.askopenfilename', return_value='arquivo.xlsx')
+    @patch('app.core.excel.filedialog.askopenfilename', return_value='arquivo.xlsx')
     def test_selecionar_arquivo_inicial_sucesso(self, mock_dialog):
         result = excel.selecionar_arquivo_inicial()
         self.assertEqual(result, 'arquivo.xlsx')
 
-    @patch('core.excel.filedialog.askopenfilename', return_value='')
+    @patch('app.core.excel.filedialog.askopenfilename', return_value='')
     def test_selecionar_arquivo_inicial_cancelado(self, mock_dialog):
         result = excel.selecionar_arquivo_inicial()
         self.assertIsNone(result)
 
-    @patch('core.excel.selecionar_arquivo_inicial', return_value='importado.xlsx')
+    @patch('app.core.excel.selecionar_arquivo_inicial', return_value='importado.xlsx')
     def test_importar_arquivo(self, mock_sel):
         result = excel.importar_arquivo()
         self.assertEqual(result, 'importado.xlsx')

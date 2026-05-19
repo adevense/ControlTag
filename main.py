@@ -3,15 +3,15 @@ from tkinter import messagebox, filedialog, ttk
 import customtkinter as ctk
 from PIL import Image, ImageTk
 import os, sys, shutil
-from core import backup
-from config.translations import TEXTS
-from config.themes import THEMES
+from app.core import backup
+from app.config.translations import TEXTS
+from app.config.themes import THEMES
 from datetime import datetime
-from core import excel
-from core import printing
-from core import rendering
-from core.utils import resource_path
-from core.config import (
+from app.core import excel
+from app.core import printing
+from app.core import rendering
+from app.core.utils import resource_path
+from app.core.config import (
     DEFAULT_DATA_DIR, CONFIG_FILE, DEFAULT_BACKUP_DIR,
     garantir_diretorios, carregar_config, salvar_config,
 )

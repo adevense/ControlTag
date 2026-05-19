@@ -1,19 +1,18 @@
-import importlib
 import sys
 import unittest
 from unittest.mock import MagicMock, patch
-from core import printing
+from app.core import printing
 
 class TestPrintingModule(unittest.TestCase):
 
     def test_importerror_win32api(self):
         """Testa o except ImportError para cobertura de HAS_WIN32 = False."""
-        module_name = "core.printing"
+        module_name = "app.core.printing"
         # Remove o módulo do cache para forçar reload
         if module_name in sys.modules:
             del sys.modules[module_name]
         with unittest.mock.patch.dict("sys.modules", {"win32api": None}):
-            import core.printing as printing_reload
+            import app.core.printing as printing_reload
             self.assertFalse(printing_reload.HAS_WIN32)
 
     @patch("os.startfile")
@@ -43,7 +42,7 @@ class TestPrintingModule(unittest.TestCase):
         mock_error.assert_called_once()
         mock_startfile.assert_called_once_with("dummy.pdf")
 
-    @patch("core.printing.canvas.Canvas")
+    @patch("app.core.printing.canvas.Canvas")
     @patch("tkinter.messagebox.showerror")
     def test_gerar_pdf_generico_com_sucesso(self, mock_error, mock_canvas):
         mock_canvas_instance = MagicMock()

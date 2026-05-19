@@ -1,8 +1,7 @@
 import unittest
 from unittest import mock
 import os
-import shutil
-from core import backup
+from app.core import backup
 
 class TestBackup(unittest.TestCase):
     @mock.patch('tkinter.messagebox.showerror')
