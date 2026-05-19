@@ -2,8 +2,13 @@ import pdf417gen
 from PIL import Image, ImageDraw, ImageFont
 
 
-def renderizar_imagem(valor):
+APP_NAME = "ControlTag"
+
+
+def renderizar_imagem(valor, titulo=None):
     """Gera uma imagem PIL com título, código de barras PDF417 e identificador."""
+    if titulo is None:
+        titulo = APP_NAME
     largura, altura = 900, 300
     valor = str(valor) if valor is not None else ""
     if not valor:
@@ -32,7 +37,6 @@ def renderizar_imagem(valor):
     except Exception:
         font = font_p = ImageFont.load_default()
 
-    titulo = "GESTÃO DE ATIVOS TIC"
     bbox_titulo = draw.textbbox((0, 0), titulo, font=font)
     draw.text(((largura - bbox_titulo[2]) // 2, 15), titulo, fill="black", font=font)
 
