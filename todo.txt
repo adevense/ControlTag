@@ -1,3 +1,3 @@
-[] - [Feature] Personalizar texto da etiqueta
-[] - [Fix] Quando clica em próximo e não tem mais items vai adicionando valores em branco
+[X] - [Feature] Personalizar texto da etiqueta
+[X] - [Fix] Quando clica em próximo e não tem mais items vai adicionando valores em branco
 [] - [Feature] Definir nome do arquivo antes de abrir explorador de arquivos
