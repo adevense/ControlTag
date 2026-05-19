@@ -12,6 +12,7 @@ import pdf417gen
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
+from core import printing
 
 # --- IMPRESSÃO DIRETA (Windows) ---
 try:
@@ -383,21 +384,7 @@ class EtiquetaApp(ctk.CTk):
         self.salvar_config()
 
     def enviar_arquivo_para_impressora(self, filepath):
-        if not HAS_WIN32 or not self.direct_print_mode:
-            os.startfile(filepath)
-            return
-
-        if not self.target_printer or "Erro" in self.target_printer or "Selecione" in self.target_printer:
-            messagebox.showwarning("Impressora", "Selecione uma impressora válida na aba Config!")
-            os.startfile(filepath)
-            return
-
-        try:
-            win32api.ShellExecute(0, "printto", filepath, f'"{self.target_printer}"', ".", 0)
-            self.status_msg(f"Enviado para: {self.target_printer}")
-        except Exception as e:
-            messagebox.showerror("Erro de Impressão", f"Falha ao enviar: {e}\nAbrindo PDF...")
-            os.startfile(filepath)
+        printing.enviar_arquivo_para_impressora(filepath, self.direct_print_mode, self.target_printer)
     
     # --- FUNÇÕES DE BACKUP ---
     def abrir_pasta_dados(self):
@@ -492,38 +479,11 @@ class EtiquetaApp(ctk.CTk):
         return barcode
 
     def gerar_pdf_generico(self, lista_dicts, filepath):
-        try:
-            W_mm = self.print_cfg["width"]
-            H_mm = self.print_cfg["height"]
-            Marg_mm = self.print_cfg["margin_x"]
-            Gap_mm = self.print_cfg["gap"]
-            OffX_mm = self.print_cfg["offset_x"]
-            OffY_mm = self.print_cfg["offset_y"]
-
-            w = W_mm * mm; h = H_mm * mm
-            margem = Marg_mm * mm; gap = Gap_mm * mm
-            off_x = OffX_mm * mm; off_y = OffY_mm * mm
-
-            larg_total = (margem * 2) + (w * 2) + gap
-            
-            c = canvas.Canvas(filepath, pagesize=(larg_total, h))
-            
-            for item in lista_dicts:
-                img_pil = self.renderizar_imagem(item['id'])
-                img_mem = ImageReader(img_pil)
-                pos_x1 = margem + off_x
-                pos_y = off_y
-                pos_x2 = margem + w + gap + off_x
-                
-                c.drawImage(img_mem, pos_x1, pos_y, width=w, height=h)
-                c.drawImage(img_mem, pos_x2, pos_y, width=w, height=h)
-                c.showPage()
-            
-            c.save()
-            self.enviar_arquivo_para_impressora(filepath)
-
-        except Exception as e: messagebox.showerror("Erro PDF", str(e))
-
+        printing.gerar_pdf_generico(
+            lista_dicts, filepath, self.print_cfg,
+            self.renderizar_imagem, self.enviar_arquivo_para_impressora
+        )
+    
     def carregar_config(self):
         if os.path.exists(CONFIG_FILE):
             try: return json.load(open(CONFIG_FILE))
