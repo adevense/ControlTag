@@ -27,7 +27,7 @@ class Sidebar(ctk.CTkFrame):
         }
 
         ctk.CTkFrame(self, height=1, fg_color="gray").pack(side="bottom", fill="x", padx=20, pady=5)
-        self.lbl_credits = ctk.CTkLabel(self, text="Dev. Inácio Ribeiro Azevedo", font=("Arial", 10), text_color="gray")
+        self.lbl_credits = ctk.CTkLabel(self, text="Developed by:\nInácio Ribeiro Azevedo\nAna Clara Silvetre de Oliveira", font=("Arial", 10), text_color="gray", justify="left", wraplength=240)
         self.lbl_credits.pack(side="bottom", pady=(0, 15))
 
         self.status_bar = ctk.CTkLabel(self, text="System Ready", font=("Arial", 11, "italic"), text_color="gray")

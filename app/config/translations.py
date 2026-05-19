@@ -7,7 +7,7 @@ TEXTS = {
         "print_cfg": ["Largura (mm)", "Altura (mm)", "Margem Esq. (mm)", "Espaço entre (mm)", "Offset X (mm)", "Offset Y (mm)"],
         "msg": ["Pronto", "Salvo com sucesso!", "Adicionado", "Erro", "Sucesso", "Backup criado", "Redefinir Padrões", "Enviado para impressora", "Backups apagados!"],
         "lbls": ["Idioma", "Tema Visual", "Escala (Zoom)", "Arquivo Excel", "Segurança & Backup", "Selecionar Impressora", "Imprimir Diretamente", "Pasta de Backup:"],
-        "credits": "Inácio Ribeiro Azevedo e Ana Clara Silvetre de Oliveira | v2.0",
+        "credits": "Desenvolvido por:\nInácio Ribeiro Azevedo\nAna Clara Silvetre de Oliveira | v2.0",
         "btns": ["📂 Alterar Pasta Backup", "🗑️ Limpar Backups", "Fazer Backup Agora", "📂 Abrir Pasta"]
     },
     "en": {
@@ -18,7 +18,7 @@ TEXTS = {
         "print_cfg": ["Width (mm)", "Height (mm)", "Left Margin (mm)", "Gap (mm)", "Offset X (mm)", "Offset Y (mm)"],
         "msg": ["Ready", "Saved successfully!", "Added", "Error", "Success", "Backup created", "Reset Defaults", "Sent to printer", "Backups cleared!"],
         "lbls": ["Language", "Visual Theme", "Scale (Zoom)", "Data File", "Security & Backup", "Select Printer", "Direct Print", "Backup Folder:"],
-        "credits": "Inácio Ribeiro Azevedo and Ana Clara Silvetre de Oliveira | v2.0",
+        "credits": "Developed by:\nInácio Ribeiro Azevedo\nAna Clara Silvetre de Oliveira | v2.0",
         "btns": ["📂 Change Backup Folder", "🗑️ Clear Backups", "Backup Now", "📂 Open Folder"]
     },
     "es": {
@@ -29,7 +29,7 @@ TEXTS = {
         "print_cfg": ["Ancho (mm)", "Alto (mm)", "Margen Izq. (mm)", "Espacio (mm)", "Offset X (mm)", "Offset Y (mm)"],
         "msg": ["Listo", "¡Guardado!", "Añadido", "Error", "Éxito", "Copia creada", "Restablecer", "Enviado a impresora", "¡Copias borradas!"],
         "lbls": ["Idioma", "Tema Visual", "Escala (Zoom)", "Archivo Datos", "Seguridad y Copias", "Seleccionar Impresora", "Impresión Directa", "Carpeta de Copias:"],
-        "credits": "Inácio Ribeiro Azevedo y Ana Clara Silvetre de Oliveira | v2.0",
+        "credits": "Desarrollado por:\nInácio Ribeiro Azevedo\nAna Clara Silvetre de Oliveira | v2.0",
         "btns": ["📂 Cambiar Carpeta", "🗑️ Borrar Copias", "Crear Copia Ahora", "📂 Abrir Carpeta"]
     }
 }
