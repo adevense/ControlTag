@@ -29,3 +29,5 @@ ENV/
 Thumbs.db
 
 .coverage
+
+*.pdf

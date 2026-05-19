@@ -1,0 +1,2 @@
+[] - [Feature] Personalizar texto da etiqueta
+[] - [Fix] Quando clica em próximo e não tem mais items vai adicionando valores em branco

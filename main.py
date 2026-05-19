@@ -1,18 +1,20 @@
 import tkinter as tk
 from tkinter import messagebox, filedialog, ttk
 import customtkinter as ctk
-from PIL import Image, ImageDraw, ImageFont, ImageTk
-import os, sys, json, shutil
+from PIL import Image, ImageTk
+import os, sys, shutil
 from core import backup
 from config.translations import TEXTS
 from config.themes import THEMES
 from datetime import datetime
 from core import excel
-import pdf417gen
-from reportlab.pdfgen import canvas
-from reportlab.lib.units import mm
-from reportlab.lib.utils import ImageReader
 from core import printing
+from core import rendering
+from core.utils import resource_path
+from core.config import (
+    DEFAULT_DATA_DIR, CONFIG_FILE, DEFAULT_BACKUP_DIR,
+    garantir_diretorios, carregar_config, salvar_config,
+)
 
 # --- IMPRESSÃO DIRETA (Windows) ---
 try:
@@ -22,28 +24,7 @@ try:
 except ImportError:
     HAS_WIN32 = False
 
-# --- FUNÇÃO PARA ENCONTRAR ARQUIVOS NO EXECUTÁVEL ---
-def resource_path(relative_path):
-    """ Obtém o caminho absoluto para o recurso, funciona para dev e para PyInstaller """
-    try:
-        # PyInstaller cria uma pasta temporária e armazena o caminho em _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-    return os.path.join(base_path, relative_path)
-
-# --- CONFIGURAÇÃO DE CAMINHOS ---
-APP_NAME = "ControlTag_BDGC"
-DEFAULT_DATA_DIR = os.path.join(os.environ["APPDATA"], APP_NAME)
-
-if not os.path.exists(DEFAULT_DATA_DIR):
-    os.makedirs(DEFAULT_DATA_DIR)
-
-CONFIG_FILE = os.path.join(DEFAULT_DATA_DIR, 'settings.json')
-DEFAULT_BACKUP_DIR = os.path.join(DEFAULT_DATA_DIR, 'backups')
-
-if not os.path.exists(DEFAULT_BACKUP_DIR):
-    os.makedirs(DEFAULT_BACKUP_DIR)
+garantir_diretorios()
 
 
 
@@ -63,7 +44,7 @@ class EtiquetaApp(ctk.CTk):
                 pass # Ignora se der erro no ícone (ex: Linux/Mac ou formato inválido)
         
         # --- CARREGAR CONFIG ---
-        self.config = self.carregar_config()
+        self.config = carregar_config()
         self.excel_path = self.config.get("last_file")
         self.linha_atual = self.config.get("last_line", 2)
         
@@ -471,28 +452,7 @@ class EtiquetaApp(ctk.CTk):
         self.salvar_config()
 
     def renderizar_imagem(self, valor):
-        largura, altura = 900, 300
-        valor = str(valor) if valor is not None else ""
-        if not valor:
-            return Image.new("RGB", (largura, altura), "white")
-        for cols in (3, 4, 6, 8):
-            try:
-                encoded = pdf417gen.encode(valor, columns=cols)
-                break
-            except (ValueError, Exception):
-                encoded = None
-        if encoded is None:
-            return Image.new("RGB", (largura, altura), "white")
-        barcode = pdf417gen.render_image(encoded, scale=5, ratio=3, padding=1)
-        barcode = barcode.resize((700, 140), Image.Resampling.LANCZOS)
-        etiqueta = Image.new("RGB", (largura, altura), "white")
-        draw = ImageDraw.Draw(etiqueta)
-        try: font = ImageFont.truetype("arial.ttf", 55); font_p = ImageFont.truetype("arial.ttf", 45)
-        except: font = font_p = ImageFont.load_default()
-        draw.text(((largura-draw.textbbox((0,0),"GESTÃO DE ATIVOS TIC",font=font)[2])//2, 15), "GESTÃO DE ATIVOS TIC", fill="black", font=font)
-        etiqueta.paste(barcode, ((largura-700)//2, 80))
-        draw.text(((largura-draw.textbbox((0,0),valor,font=font_p)[2])//2, 235), valor, fill="black", font=font_p)
-        return etiqueta
+        return rendering.renderizar_imagem(valor)
 
     def gerar_pdf_generico(self, lista_dicts, filepath):
         printing.gerar_pdf_generico(
@@ -500,12 +460,6 @@ class EtiquetaApp(ctk.CTk):
             self.renderizar_imagem, self.enviar_arquivo_para_impressora
         )
     
-    def carregar_config(self):
-        if os.path.exists(CONFIG_FILE):
-            try: return json.load(open(CONFIG_FILE))
-            except: pass
-        return {"language": "pt"}
-
     def salvar_config(self):
         dados = {
             "last_file": self.excel_path, "last_line": self.linha_atual,
@@ -515,7 +469,7 @@ class EtiquetaApp(ctk.CTk):
             "direct_print": self.direct_print_mode,
             "backup_path": self.backup_dir
         }
-        with open(CONFIG_FILE, 'w') as f: json.dump(dados, f)
+        salvar_config(dados)
 
     def abrir_planilha_inicial(self):
         self.wb, self.ws = excel.abrir_planilha_inicial(self.excel_path)
