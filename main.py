@@ -3,6 +3,7 @@ from tkinter import messagebox, filedialog, ttk
 import customtkinter as ctk
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 import os, sys, json, shutil
+from core import backup
 from config.translations import TEXTS
 from config.themes import THEMES
 from datetime import datetime
@@ -400,48 +401,20 @@ class EtiquetaApp(ctk.CTk):
     
     # --- FUNÇÕES DE BACKUP ---
     def abrir_pasta_dados(self):
-        if os.path.exists(self.backup_dir):
-            os.startfile(self.backup_dir)
-        else:
-            messagebox.showerror("Erro", "Pasta não encontrada")
+        backup.abrir_pasta_dados(self.backup_dir)
 
     def selecionar_pasta_backup(self):
-        path = filedialog.askdirectory(title="Selecione onde salvar os backups")
+        path = backup.selecionar_pasta_backup(self.backup_dir, filedialog, lambda p: self.lbl_path_backup_val.configure(text=p))
         if path:
             self.backup_dir = path
-            self.lbl_path_backup_val.configure(text=self.backup_dir)
             self.salvar_config()
             messagebox.showinfo("Sucesso", f"Backups agora serão salvos em:\n{path}")
 
     def limpar_backups(self):
-        resp = messagebox.askyesno("Limpar Backups", f"Tem certeza que deseja apagar TODOS os arquivos .xlsx da pasta:\n\n{self.backup_dir}\n\nIsso não pode ser desfeito.")
-        if resp:
-            try:
-                count = 0
-                for filename in os.listdir(self.backup_dir):
-                    if filename.endswith(".xlsx") or filename.startswith("Backup_"):
-                        filepath = os.path.join(self.backup_dir, filename)
-                        os.remove(filepath)
-                        count += 1
-                self.status_msg(TEXTS[self.idioma]["msg"][8])
-                messagebox.showinfo("Limpeza", f"{count} arquivos foram removidos.")
-            except Exception as e:
-                messagebox.showerror("Erro", str(e))
+        backup.limpar_backups(self.backup_dir, self.idioma, TEXTS, self.status_msg)
 
     def fazer_backup_manual(self):
-        if self.excel_path and os.path.exists(self.excel_path):
-            if not os.path.exists(self.backup_dir): os.makedirs(self.backup_dir)
-            
-            nome_arq = f"Backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
-            dst = os.path.join(self.backup_dir, nome_arq)
-            
-            try:
-                shutil.copy2(self.excel_path, dst)
-                messagebox.showinfo("Backup", f"Backup salvo com sucesso em:\n{dst}")
-            except Exception as e:
-                messagebox.showerror("Erro", f"Falha ao criar backup: {str(e)}")
-        else:
-            messagebox.showwarning("Aviso", "Nenhum arquivo Excel carregado para fazer backup.")
+        backup.fazer_backup_manual(self.excel_path, self.backup_dir)
     
     # --- FIM FUNÇÕES BACKUP ---
 
