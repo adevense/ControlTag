@@ -471,12 +471,28 @@ class EtiquetaApp(ctk.CTk):
         self.salvar_config()
 
     def renderizar_imagem(self, valor):
-        largura, altura = 900, 300 
-        barcode = pdf417gen.render_image(
-            pdf417gen.encode(valor, columns=4),  # Reduzido de 6 para 4 colunas
-            scale=5, ratio=3, padding=1
-        )
-        return barcode
+        largura, altura = 900, 300
+        valor = str(valor) if valor is not None else ""
+        if not valor:
+            return Image.new("RGB", (largura, altura), "white")
+        for cols in (3, 4, 6, 8):
+            try:
+                encoded = pdf417gen.encode(valor, columns=cols)
+                break
+            except (ValueError, Exception):
+                encoded = None
+        if encoded is None:
+            return Image.new("RGB", (largura, altura), "white")
+        barcode = pdf417gen.render_image(encoded, scale=5, ratio=3, padding=1)
+        barcode = barcode.resize((700, 140), Image.Resampling.LANCZOS)
+        etiqueta = Image.new("RGB", (largura, altura), "white")
+        draw = ImageDraw.Draw(etiqueta)
+        try: font = ImageFont.truetype("arial.ttf", 55); font_p = ImageFont.truetype("arial.ttf", 45)
+        except: font = font_p = ImageFont.load_default()
+        draw.text(((largura-draw.textbbox((0,0),"GESTÃO DE ATIVOS TIC",font=font)[2])//2, 15), "GESTÃO DE ATIVOS TIC", fill="black", font=font)
+        etiqueta.paste(barcode, ((largura-700)//2, 80))
+        draw.text(((largura-draw.textbbox((0,0),valor,font=font_p)[2])//2, 235), valor, fill="black", font=font_p)
+        return etiqueta
 
     def gerar_pdf_generico(self, lista_dicts, filepath):
         printing.gerar_pdf_generico(
