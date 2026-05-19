@@ -7,7 +7,7 @@ from core import backup
 from config.translations import TEXTS
 from config.themes import THEMES
 from datetime import datetime
-from openpyxl import load_workbook
+from core import excel
 import pdf417gen
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
@@ -485,16 +485,11 @@ class EtiquetaApp(ctk.CTk):
 
     def renderizar_imagem(self, valor):
         largura, altura = 900, 300 
-        barcode = pdf417gen.render_image(pdf417gen.encode(valor, columns=6), scale=5, ratio=3, padding=1)
-        barcode = barcode.resize((700, 140), Image.Resampling.LANCZOS)
-        etiqueta = Image.new("RGB", (largura, altura), "white")
-        draw = ImageDraw.Draw(etiqueta)
-        try: font = ImageFont.truetype("arial.ttf", 55); font_p = ImageFont.truetype("arial.ttf", 45)
-        except: font = font_p = ImageFont.load_default()
-        draw.text(((largura-draw.textbbox((0,0),"GESTÃO DE ATIVOS TIC",font=font)[2])//2, 15), "GESTÃO DE ATIVOS TIC", fill="black", font=font)
-        etiqueta.paste(barcode, ((largura-700)//2, 80))
-        draw.text(((largura-draw.textbbox((0,0),valor,font=font_p)[2])//2, 235), valor, fill="black", font=font_p)
-        return etiqueta
+        barcode = pdf417gen.render_image(
+            pdf417gen.encode(valor, columns=4),  # Reduzido de 6 para 4 colunas
+            scale=5, ratio=3, padding=1
+        )
+        return barcode
 
     def gerar_pdf_generico(self, lista_dicts, filepath):
         try:
@@ -547,16 +542,14 @@ class EtiquetaApp(ctk.CTk):
         with open(CONFIG_FILE, 'w') as f: json.dump(dados, f)
 
     def abrir_planilha_inicial(self):
-        try:
-            self.wb = load_workbook(self.excel_path)
-            self.ws = self.wb.active
+        self.wb, self.ws = excel.abrir_planilha_inicial(self.excel_path)
+        if self.ws:
             self.atualizar_dados()
             self.carregar_dados_tabela()
             self.status_msg(f"File Loaded")
-        except Exception as e: self.status_msg(f"Erro: {str(e)}")
 
     def selecionar_arquivo_inicial(self):
-        p = filedialog.askopenfilename(filetypes=[("Excel", "*.xlsx")])
+        p = excel.selecionar_arquivo_inicial()
         if p:
             self.excel_path = p; self.linha_atual = 2
             self.salvar_config(); self.abrir_planilha_inicial()
@@ -564,17 +557,14 @@ class EtiquetaApp(ctk.CTk):
     def importar_arquivo(self): self.selecionar_arquivo_inicial()
 
     def atualizar_dados(self):
-        if not hasattr(self, 'ws'): return
-        val = self.ws[f"A{self.linha_atual}"].value
-        self.dado = str(val) if val else ""
-        desc = str(self.ws[f"B{self.linha_atual}"].value or "")
-        setor = str(self.ws[f"C{self.linha_atual}"].value or "")
-        self.lbl_desc.configure(text=f"{desc}\n{setor}")
-        self.entry_id.delete(0, 'end'); self.entry_id.insert(0, self.dado)
-        if self.dado:
-            img = self.renderizar_imagem(self.dado)
-            img_tk = ImageTk.PhotoImage(img.resize((500, 160)))
-            self.img_label.configure(image=img_tk); self.img_label.image = img_tk
+        if not hasattr(self, 'ws') or self.ws is None: return
+        self.dado = excel.atualizar_dados(
+            self.ws, self.linha_atual,
+            lbl_desc=self.lbl_desc,
+            entry_id=self.entry_id,
+            renderizar_imagem=self.renderizar_imagem,
+            img_label=self.img_label
+        )
 
     def salvar_edicao(self):
         if not os.path.exists(self.backup_dir): os.makedirs(self.backup_dir)
