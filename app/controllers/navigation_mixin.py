@@ -2,9 +2,20 @@ from tkinter import messagebox
 
 
 class NavigationMixin:
+    def _ultima_linha(self):
+        if self.ws is None:
+            return 2
+        for i in range(self.ws.max_row, 1, -1):
+            if self.ws[f"A{i}"].value:
+                return i
+        return 2
+
     def proximo(self):
-        self.linha_atual += 1
-        self._atualizar_dados()
+        if self.ws is None:
+            return
+        if self.linha_atual < self._ultima_linha():
+            self.linha_atual += 1
+            self._atualizar_dados()
 
     def anterior(self):
         if self.linha_atual > 2:
