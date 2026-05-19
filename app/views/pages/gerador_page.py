@@ -8,6 +8,12 @@ class GeradorPage(ctk.CTkFrame):
         self.controller = controller
         self._build()
 
+
+    def _force_focus_search_entry(self, event):
+        widget = self.focus_get()
+        if not isinstance(widget, (ctk.CTkEntry, tk.Entry)):
+            self.entry_busca.focus_set()
+
     def _build(self):
         self.grid_columnconfigure(0, weight=2)
         self.grid_columnconfigure(1, weight=1)
@@ -59,6 +65,7 @@ class GeradorPage(ctk.CTkFrame):
 
         self.entry_busca = ctk.CTkEntry(right, placeholder_text="...")
         self.entry_busca.pack(fill="x", padx=20, pady=(0, 5))
+        self.entry_busca.bind('<Return>', lambda e: self.controller.buscar_patrimonio())
 
         self.btn_buscar = ctk.CTkButton(right, text="Search", command=self.controller.buscar_patrimonio)
         self.btn_buscar.pack(fill="x", padx=20, pady=(0, 30))
@@ -82,6 +89,9 @@ class GeradorPage(ctk.CTkFrame):
 
         self.btn_lote = ctk.CTkButton(right, text="Batch", fg_color="#c0392b", command=self.controller.gerar_lote_intervalo)
         self.btn_lote.pack(fill="x", padx=20, pady=10)
+
+    def focus_search_entry(self):
+        self.entry_busca.focus_set()
 
     def apply_theme(self, theme):
         for btn in [self.btn_ant, self.btn_prox, self.btn_buscar, self.btn_add, self.btn_lote]:

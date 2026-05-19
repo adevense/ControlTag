@@ -19,6 +19,14 @@ class MainView(ctk.CTk):
         self._build_layout()
         self._bind_keys()
 
+        self.bind('<Key>', self._focus_gerador_search_entry, add='+')
+
+    def _focus_gerador_search_entry(self, event):
+        gerador = self.pages["Gerador"]
+        if self.focus_get() not in (gerador.entry_busca, gerador.entry_id, gerador.batch_start, gerador.batch_end):
+            if gerador.winfo_ismapped():
+                gerador.focus_search_entry()
+
     def _set_icon(self):
         icon_path = resource_path(os.path.join("resources", "icon.ico"))
         if os.path.exists(icon_path):
@@ -57,6 +65,8 @@ class MainView(ctk.CTk):
     def show_page(self, name):
         self.pages[name].tkraise()
         self.sidebar.apply_theme(self.controller.get_tema_atual())
+        if name == "Gerador":
+            self.pages["Gerador"].focus_search_entry()
 
     def set_status(self, msg):
         self.sidebar.set_status(msg)

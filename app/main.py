@@ -12,7 +12,11 @@ def main():
 
     controller = AppController(config_service, queue_service)
 
+    import sys
     view = MainView(controller)
     controller.set_view(view)
-
-    view.mainloop()
+    try:
+        view.mainloop()
+    except KeyboardInterrupt:
+        print("\nEncerrado pelo usuário (Ctrl+C)")
+        sys.exit(0)
