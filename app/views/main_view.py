@@ -65,7 +65,6 @@ class MainView(ctk.CTk):
     def show_page(self, name):
         self.pages[name].tkraise()
         self.sidebar.apply_theme(self.controller.get_tema_atual())
-        # Foca o campo de busca ao abrir a página Gerador
         if name == "Gerador":
             self.pages["Gerador"].focus_search_entry()
 
