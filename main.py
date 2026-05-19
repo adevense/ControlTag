@@ -3,7 +3,7 @@ from tkinter import messagebox, filedialog, ttk
 import customtkinter as ctk
 from PIL import Image, ImageTk
 import os, sys, shutil
-from app.core import backup
+from app.services.config_service import ConfigService
 from app.config.translations import TEXTS
 from app.config.themes import THEMES
 from datetime import datetime
@@ -33,36 +33,30 @@ class EtiquetaApp(ctk.CTk):
         super().__init__()
         self.title("Control Tag BDGC v1.0")
         self.geometry("1366x900")
-        
+
         # --- DEFINIR ÍCONE DA JANELA ---
-        # Tenta carregar o icon.ico se existir
         icon_path = resource_path(os.path.join("resources", "icon.ico"))
         if os.path.exists(icon_path):
             try:
                 self.iconbitmap(icon_path)
             except:
-                pass # Ignora se der erro no ícone (ex: Linux/Mac ou formato inválido)
-        
-        # --- CARREGAR CONFIG ---
-        self.config = carregar_config()
+                pass
+
+        # --- SERVIÇO DE CONFIG ---
+        self.config_service = ConfigService()
+        self.config = self.config_service.config
         self.excel_path = self.config.get("last_file")
         self.linha_atual = self.config.get("last_line", 2)
-        
-        # Pasta de Backup
-        self.backup_dir = self.config.get("backup_path", DEFAULT_BACKUP_DIR)
-        if not os.path.exists(self.backup_dir):
-            try: os.makedirs(self.backup_dir)
-            except: self.backup_dir = DEFAULT_BACKUP_DIR
-        
-        # Correção de Tema
+        self.backup_dir = self.config_service.get_backup_dir()
         saved_theme = self.config.get("theme_name", "Padrão (Azul Tech)")
         self.tema_atual = saved_theme if saved_theme in THEMES else "Padrão (Azul Tech)"
         
+
         self.idioma = self.config.get("language", "pt")
-        if self.idioma not in TEXTS: self.idioma = "pt"
+        if self.idioma not in TEXTS:
+            self.idioma = "pt"
 
         self.escala_ui = self.config.get("ui_scale", 1.0)
-        
         self.print_cfg = self.config.get("print_config", {
             "width": 45.0, "height": 15.0, "margin_x": 2.5, "gap": 0.3, "offset_x": 0.0, "offset_y": 0.0
         })
@@ -369,21 +363,20 @@ class EtiquetaApp(ctk.CTk):
     
     # --- FUNÇÕES DE BACKUP ---
     def abrir_pasta_dados(self):
-        backup.abrir_pasta_dados(self.backup_dir)
+        self.config_service.open_backup_folder()
 
     def selecionar_pasta_backup(self):
-        path = backup.selecionar_pasta_backup(self.backup_dir, filedialog, lambda p: self.lbl_path_backup_val.configure(text=p))
+        path = self.config_service.select_backup_folder(filedialog, lambda p: self.lbl_path_backup_val.configure(text=p))
         if path:
             self.backup_dir = path
             self.salvar_config()
             messagebox.showinfo("Sucesso", f"Backups agora serão salvos em:\n{path}")
 
     def limpar_backups(self):
-        backup.limpar_backups(self.backup_dir, self.idioma, TEXTS, self.status_msg)
+        self.config_service.clear_backups(self.idioma, TEXTS, self.status_msg)
 
     def fazer_backup_manual(self):
-        backup.fazer_backup_manual(self.excel_path, self.backup_dir)
-    
+        self.config_service.manual_backup(self.excel_path)
     # --- FIM FUNÇÕES BACKUP ---
 
     def mudar_idioma(self, novo_lang):
@@ -462,14 +455,17 @@ class EtiquetaApp(ctk.CTk):
     
     def salvar_config(self):
         dados = {
-            "last_file": self.excel_path, "last_line": self.linha_atual,
-            "theme_name": self.tema_atual, "language": self.idioma, "ui_scale": self.escala_ui,
+            "last_file": self.excel_path,
+            "last_line": self.linha_atual,
+            "theme_name": self.tema_atual,
+            "language": self.idioma,
+            "ui_scale": self.escala_ui,
             "print_config": self.print_cfg,
             "target_printer": self.target_printer,
             "direct_print": self.direct_print_mode,
             "backup_path": self.backup_dir
         }
-        salvar_config(dados)
+        self.config_service.save_all(dados)
 
     def abrir_planilha_inicial(self):
         self.wb, self.ws = excel.abrir_planilha_inicial(self.excel_path)
