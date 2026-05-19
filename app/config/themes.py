@@ -1,0 +1,16 @@
+THEMES = {
+    "Padrão (Azul Tech)":   {"mode": "Dark",  "sidebar": "#1a1a1a", "primary": "#1f538d", "hover": "#14375e", "text_menu": "white"},
+    "Laranja Solar":        {"mode": "Light", "sidebar": "#122538", "primary": "#E76426", "hover": "#c04e15", "text_menu": "white"},
+    "Petrobras (Brand)":    {"mode": "Light", "sidebar": "#008542", "primary": "#FDB913", "hover": "#e0a00b", "text_menu": "white"},
+    "Roxo Fintech":         {"mode": "Dark",  "sidebar": "#111111", "primary": "#820AD1", "hover": "#5c0594", "text_menu": "white"},
+    "Vibe Verde":           {"mode": "Dark",  "sidebar": "#000000", "primary": "#1DB954", "hover": "#1ed760", "text_menu": "white"},
+    "Minsait (Corporativo)":{"mode": "Dark",  "sidebar": "#2b050a", "primary": "#9e1b32", "hover": "#c42340", "text_menu": "#ffe6ea"},
+    "Cyberpunk (Neon)":     {"mode": "Dark",  "sidebar": "#0b0c15", "primary": "#00f3ff", "hover": "#ff0099", "text_menu": "#00f3ff"},
+    "Dracula (Vampire)":    {"mode": "Dark",  "sidebar": "#282a36", "primary": "#bd93f9", "hover": "#ff79c6", "text_menu": "#f8f8f2"},
+    "Natureza (Forest)":    {"mode": "Light", "sidebar": "#2d3e26", "primary": "#4a7c59", "hover": "#355e3b", "text_menu": "#e8f5e9"},
+    "Oceano (Teal)":        {"mode": "Dark",  "sidebar": "#002b36", "primary": "#2aa198", "hover": "#268bd2", "text_menu": "white"},
+    "Cinza Titânio":        {"mode": "Light", "sidebar": "#bdc3c7", "primary": "#7f8c8d", "hover": "#95a5a6", "text_menu": "black"},
+    "Café Expresso":        {"mode": "Dark",  "sidebar": "#3e2723", "primary": "#6d4c41", "hover": "#8d6e63", "text_menu": "#efebe9"},
+    "Minimalista (Clean)":  {"mode": "Light", "sidebar": "#f0f0f0", "primary": "#333333", "hover": "#555555", "text_menu": "black"},
+    "Alto Contraste":       {"mode": "Dark",  "sidebar": "#000000", "primary": "#FFFFFF", "hover": "#cccccc", "text_menu": "white"},
+}
