@@ -3,6 +3,8 @@ from tkinter import messagebox, filedialog, ttk
 import customtkinter as ctk
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 import os, sys, json, shutil
+from config.translations import TEXTS
+from config.themes import THEMES
 from datetime import datetime
 from openpyxl import load_workbook
 import pdf417gen
@@ -41,60 +43,7 @@ DEFAULT_BACKUP_DIR = os.path.join(DEFAULT_DATA_DIR, 'backups')
 if not os.path.exists(DEFAULT_BACKUP_DIR):
     os.makedirs(DEFAULT_BACKUP_DIR)
 
-# --- TRADUÇÕES ---
-TEXTS = {
-    "pt": {
-        "tabs": ["Geral", "Aparência", "Impressão"],
-        "nav": ["Gerador", "Tabela", "Fila", "Config"],
-        "ui": ["Visualização", "Descrição", "Painel de Ação", "Anterior", "Próximo", "Salvar ID"],
-        "actions": ["Buscar...", "Buscar", "Adicionar à Fila", "PDF Único", "Início", "Fim", "Gerar Lote"],
-        "print_cfg": ["Largura (mm)", "Altura (mm)", "Margem Esq. (mm)", "Espaço entre (mm)", "Offset X (mm)", "Offset Y (mm)"],
-        "msg": ["Pronto", "Salvo com sucesso!", "Adicionado", "Erro", "Sucesso", "Backup criado", "Redefinir Padrões", "Enviado para impressora", "Backups apagados!"],
-        "lbls": ["Idioma", "Tema Visual", "Escala (Zoom)", "Arquivo Excel", "Segurança & Backup", "Selecionar Impressora", "Imprimir Diretamente", "Pasta de Backup:"],
-        "credits": "Dev. Inácio Ribeiro Azevedo | v1.0",
-        "btns": ["📂 Alterar Pasta Backup", "🗑️ Limpar Backups", "Fazer Backup Agora", "📂 Abrir Pasta"]
-    },
-    "en": {
-        "tabs": ["General", "Appearance", "Printing"],
-        "nav": ["Generator", "Table", "Queue", "Settings"],
-        "ui": ["Preview", "Description", "Action Panel", "Previous", "Next", "Save ID"],
-        "actions": ["Search...", "Search", "Add to Queue", "Single PDF", "Start", "End", "Batch Print"],
-        "print_cfg": ["Width (mm)", "Height (mm)", "Left Margin (mm)", "Gap (mm)", "Offset X (mm)", "Offset Y (mm)"],
-        "msg": ["Ready", "Saved successfully!", "Added", "Error", "Success", "Backup created", "Reset Defaults", "Sent to printer", "Backups cleared!"],
-        "lbls": ["Language", "Visual Theme", "Scale (Zoom)", "Data File", "Security & Backup", "Select Printer", "Direct Print", "Backup Folder:"],
-        "credits": "Dev. Inácio Ribeiro Azevedo | v1.0",
-        "btns": ["📂 Change Backup Folder", "🗑️ Clear Backups", "Backup Now", "📂 Open Folder"]
-    },
-    "es": {
-        "tabs": ["General", "Apariencia", "Impresión"],
-        "nav": ["Generador", "Tabla", "Cola", "Ajustes"],
-        "ui": ["Vista Previa", "Descripción", "Panel de Acción", "Anterior", "Siguiente", "Guardar ID"],
-        "actions": ["Buscar...", "Buscar", "Añadir a Cola", "PDF Único", "Inicio", "Fin", "Generar Lote"],
-        "print_cfg": ["Ancho (mm)", "Alto (mm)", "Margen Izq. (mm)", "Espacio (mm)", "Offset X (mm)", "Offset Y (mm)"],
-        "msg": ["Listo", "¡Guardado!", "Añadido", "Error", "Éxito", "Copia creada", "Restablecer", "Enviado a impresora", "¡Copias borradas!"],
-        "lbls": ["Idioma", "Tema Visual", "Escala (Zoom)", "Archivo Datos", "Seguridad y Copias", "Seleccionar Impresora", "Impresión Directa", "Carpeta de Copias:"],
-        "credits": "Dev. Inácio Ribeiro Azevedo | v1.0",
-        "btns": ["📂 Cambiar Carpeta", "🗑️ Borrar Copias", "Crear Copia Ahora", "📂 Abrir Carpeta"]
-    }
-}
 
-# --- TEMAS VISUAIS ---
-THEMES = {
-    "Padrão (Azul Tech)":   {"mode": "Dark",  "sidebar": "#1a1a1a", "primary": "#1f538d", "hover": "#14375e", "text_menu": "white"},
-    "Laranja Solar":        {"mode": "Light", "sidebar": "#122538", "primary": "#E76426", "hover": "#c04e15", "text_menu": "white"},
-    "Petrobras (Brand)":    {"mode": "Light", "sidebar": "#008542", "primary": "#FDB913", "hover": "#e0a00b", "text_menu": "white"},
-    "Roxo Fintech":         {"mode": "Dark",  "sidebar": "#111111", "primary": "#820AD1", "hover": "#5c0594", "text_menu": "white"},
-    "Vibe Verde":           {"mode": "Dark",  "sidebar": "#000000", "primary": "#1DB954", "hover": "#1ed760", "text_menu": "white"},
-    "Minsait (Corporativo)":{"mode": "Dark",  "sidebar": "#2b050a", "primary": "#9e1b32", "hover": "#c42340", "text_menu": "#ffe6ea"},
-    "Cyberpunk (Neon)":     {"mode": "Dark",  "sidebar": "#0b0c15", "primary": "#00f3ff", "hover": "#ff0099", "text_menu": "#00f3ff"},
-    "Dracula (Vampire)":    {"mode": "Dark",  "sidebar": "#282a36", "primary": "#bd93f9", "hover": "#ff79c6", "text_menu": "#f8f8f2"},
-    "Natureza (Forest)":    {"mode": "Light", "sidebar": "#2d3e26", "primary": "#4a7c59", "hover": "#355e3b", "text_menu": "#e8f5e9"},
-    "Oceano (Teal)":        {"mode": "Dark",  "sidebar": "#002b36", "primary": "#2aa198", "hover": "#268bd2", "text_menu": "white"},
-    "Cinza Titânio":        {"mode": "Light", "sidebar": "#bdc3c7", "primary": "#7f8c8d", "hover": "#95a5a6", "text_menu": "black"},
-    "Café Expresso":        {"mode": "Dark",  "sidebar": "#3e2723", "primary": "#6d4c41", "hover": "#8d6e63", "text_menu": "#efebe9"},
-    "Minimalista (Clean)":  {"mode": "Light", "sidebar": "#f0f0f0", "primary": "#333333", "hover": "#555555", "text_menu": "black"},
-    "Alto Contraste":       {"mode": "Dark",  "sidebar": "#000000", "primary": "#FFFFFF", "hover": "#cccccc", "text_menu": "white"},
-}
 
 class EtiquetaApp(ctk.CTk):
     def __init__(self):
@@ -104,7 +53,7 @@ class EtiquetaApp(ctk.CTk):
         
         # --- DEFINIR ÍCONE DA JANELA ---
         # Tenta carregar o icon.ico se existir
-        icon_path = resource_path("icon.ico")
+        icon_path = resource_path(os.path.join("resources", "icon.ico"))
         if os.path.exists(icon_path):
             try:
                 self.iconbitmap(icon_path)
@@ -178,7 +127,7 @@ class EtiquetaApp(ctk.CTk):
         self.sidebar.grid_rowconfigure(6, weight=1)
 
         # --- LOGO (IMAGEM OU TEXTO) ---
-        img_path = resource_path("logo.png")
+        img_path = resource_path(os.path.join("resources", "logo.png"))
         if os.path.exists(img_path):
             try:
                 # Carrega imagem se existir
