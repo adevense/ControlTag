@@ -13,19 +13,25 @@ class MainView(ctk.CTk):
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
-        self.title("Control Tag BDGC v1.0")
+        self.title("Control Tag v2.0")
         self.geometry("1366x900")
         self._set_icon()
+        self._active_page = "Gerador"
         self._build_layout()
         self._bind_keys()
 
         self.bind('<Key>', self._focus_gerador_search_entry, add='+')
 
     def _focus_gerador_search_entry(self, event):
+        if self._active_page != "Gerador":
+            return
         gerador = self.pages["Gerador"]
-        if self.focus_get() not in (gerador.entry_busca, gerador.entry_id, gerador.batch_start, gerador.batch_end):
-            if gerador.winfo_ismapped():
-                gerador.focus_search_entry()
+        focused = self.focus_get()
+        if focused not in (gerador.entry_busca._entry, gerador.entry_id._entry,
+                           gerador.batch_start._entry, gerador.batch_end._entry,
+                           gerador.entry_busca, gerador.entry_id,
+                           gerador.batch_start, gerador.batch_end):
+            gerador.focus_search_entry()
 
     def _set_icon(self):
         icon_path = resource_path(os.path.join("resources", "icon.ico"))
@@ -63,6 +69,7 @@ class MainView(ctk.CTk):
                   if self.focus_get() == self.pages["Gerador"].entry_busca else None)
 
     def show_page(self, name):
+        self._active_page = name
         self.pages[name].tkraise()
         self.sidebar.apply_theme(self.controller.get_tema_atual())
         if name == "Gerador":

@@ -16,7 +16,7 @@ class Sidebar(ctk.CTkFrame):
     def _build(self):
         self._build_logo()
 
-        self.lbl_version = ctk.CTkLabel(self, text="v1.0", font=("Arial", 12))
+        self.lbl_version = ctk.CTkLabel(self, text="v2.0", font=("Arial", 12))
         self.lbl_version.pack(pady=(0, 30))
 
         self.btn_nav = {

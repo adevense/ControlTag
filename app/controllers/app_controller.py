@@ -32,6 +32,7 @@ class AppController(NavigationMixin, ExcelMixin, QueueMixin, PrinterMixin, Backu
         })
         self.target_printer = config.get("target_printer", "")
         self.direct_print_mode = config.get("direct_print", False)
+        self.titulo_etiqueta = config.get("titulo_etiqueta", "ControlTag")
 
         self.wb = None
         self.ws = None
@@ -52,6 +53,7 @@ class AppController(NavigationMixin, ExcelMixin, QueueMixin, PrinterMixin, Backu
         config_page.set_print_cfg(self.print_cfg)
         config_page.set_direct_mode(self.direct_print_mode)
         config_page.set_printers(self._listar_impressoras(), self.target_printer)
+        config_page.set_titulo_etiqueta(self.titulo_etiqueta)
 
         if self.excel_path and os.path.exists(self.excel_path):
             self._abrir_planilha()

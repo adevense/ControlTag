@@ -20,7 +20,7 @@ class ExcelMixin:
             self.ws, self.linha_atual,
             lbl_desc=page.lbl_desc,
             entry_id=page.entry_id,
-            renderizar_imagem=rendering.renderizar_imagem,
+            renderizar_imagem=lambda v: rendering.renderizar_imagem(v, titulo=self.titulo_etiqueta),
             img_label=page.img_label
         )
 

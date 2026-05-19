@@ -64,6 +64,6 @@ class QueueMixin:
     def _gerar_pdf(self, lista_dicts, filepath):
         printing.gerar_pdf_generico(
             lista_dicts, filepath, self.print_cfg,
-            rendering.renderizar_imagem,
+            lambda v: rendering.renderizar_imagem(v, titulo=self.titulo_etiqueta),
             lambda f: printing.enviar_arquivo_para_impressora(f, self.direct_print_mode, self.target_printer)
         )

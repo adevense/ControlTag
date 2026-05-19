@@ -39,6 +39,14 @@ class SettingsMixin:
         self.salvar_config()
         self.view.set_status(f"Language: {novo_lang.upper()}")
 
+    def mudar_titulo_etiqueta(self):
+        titulo = self.view.pages["Config"].get_titulo_etiqueta().strip()
+        self.titulo_etiqueta = titulo if titulo else "ControlTag"
+        self.view.pages["Config"].set_titulo_etiqueta(self.titulo_etiqueta)
+        self.salvar_config()
+        self._atualizar_dados()
+        self.view.set_status(f"Título: {self.titulo_etiqueta}")
+
     def salvar_config(self):
         self.config_service.save_all({
             "last_file": self.excel_path,
@@ -50,6 +58,7 @@ class SettingsMixin:
             "target_printer": self.target_printer,
             "direct_print": self.direct_print_mode,
             "backup_path": self.backup_dir,
+            "titulo_etiqueta": self.titulo_etiqueta,
         })
 
     def _texts(self):

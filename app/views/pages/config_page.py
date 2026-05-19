@@ -34,6 +34,15 @@ class ConfigPage(ctk.CTkFrame):
         self.btn_file = ctk.CTkButton(tab, text="Select File", command=self.controller.importar_arquivo)
         self.btn_file.pack(pady=5)
 
+        self.lbl_conf_titulo = ctk.CTkLabel(tab, text="Título da Etiqueta", font=("Arial", 14, "bold"))
+        self.lbl_conf_titulo.pack(pady=(15, 5))
+        frame_titulo = ctk.CTkFrame(tab, fg_color="transparent")
+        frame_titulo.pack(fill="x", padx=20, pady=(0, 5))
+        self.entry_titulo = ctk.CTkEntry(frame_titulo, placeholder_text="ControlTag", justify="center", width=200)
+        self.entry_titulo.pack(padx=(0, 5))
+        self.btn_save_titulo = ctk.CTkButton(frame_titulo, text="Salvar", width=80, command=self.controller.mudar_titulo_etiqueta)
+        self.btn_save_titulo.pack(pady=5)
+
         self.lbl_conf_extra = ctk.CTkLabel(tab, text="Backup", font=("Arial", 14, "bold"))
         self.lbl_conf_extra.pack(pady=(20, 5))
 
@@ -109,6 +118,13 @@ class ConfigPage(ctk.CTkFrame):
 
     def set_scale(self, scale):
         self.slider.set(scale)
+
+    def set_titulo_etiqueta(self, titulo):
+        self.entry_titulo.delete(0, "end")
+        self.entry_titulo.insert(0, titulo)
+
+    def get_titulo_etiqueta(self):
+        return self.entry_titulo.get()
 
     def set_backup_path(self, path):
         self.lbl_path_backup_val.configure(text=path)
