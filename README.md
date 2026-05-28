@@ -21,7 +21,7 @@
    ```
 4. Execute o sistema:
    ```sh
-   python main.py
+   python run.py
    ```
 
 ## Como rodar os testes
