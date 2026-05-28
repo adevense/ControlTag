@@ -1,0 +1,5 @@
+customtkinter
+Pillow
+openpyxl
+pdf417gen
+reportlab
